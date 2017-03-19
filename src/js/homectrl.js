@@ -22,8 +22,13 @@ function gameController($scope){
   class BlockObj {
     constructor(point, coord){ 
       this.point = point;
-      this.coord = coord;
     }
+  }
+
+  function getRandomInt(max,min){
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * 3);
   }
 
   $scope.init = function(){
@@ -39,6 +44,10 @@ function gameController($scope){
   }
 
   $scope.createBlock = function(){
-    $scope.sheetTable[0][0].getBlock(new BlockObj(2, [0, 0]));
+    var x = getRandomInt(3);
+    var y = getRandomInt(3);
+    $scope.sheetTable[y][x].getBlock(new BlockObj(2));
   }
+
+
 }
