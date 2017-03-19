@@ -4,7 +4,7 @@
   <title>Angular 256</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="lib/bootstrap.css"></link>
-
+  <link rel="stylesheet" href="css/style.css"></link>
   <script type="text/javascript" src="lib/jquery.js"></script>
   <script type="text/javascript" src="lib/angular.js"></script>
   <script type="text/javascript" src="lib/bootstrap.js"></script>
@@ -25,48 +25,20 @@
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-    <table class="window">
-      <tbody>
-      <tr>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
+  <div class="container" ng-controller="gameController">
+    <div class="row" ng-init="init()">
+    <table class="game-screen">
+    <!-- use dollor scope ! -->
+      <tr ng-repeat="sheetAry in sheetTable">
+        <td ng-repeat="sheet in sheetAry">
+          <div class="sheet">
+            <div ng-if="sheet.hasBlock" class="block">{{sheet.block.point}}
+            </div>
+          </div>
+        </td>
       </tr>
-       <tr>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
-      </tr>
-      <tr>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
-        <td><div class="block"><span class="number">0</span></div></td>
-      </tr>
-      </tbody>
     </table>
     </div>
   </div>
 </body>
-<style>
-  .window{
-    background-color:#e2e2e2;
-    border-radius:5px;
-  }
-  .number{
-  }
-  .block{
-    border-radius:5px;
-    background-color:#efefef;
-    font-size:50px;
-    font-weight:bold;
-    height:100px;
-    width:100px;
-    padding-left:35px;
-    padding-top:15px;
-    margin:15px;
-  }
-
-</style>
 </html>

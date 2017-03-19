@@ -1,0 +1,49 @@
+.game-screen{
+  background-color:#e2e2e2;
+  border-radius:5px;
+}
+
+.sheet{
+  border-radius:5px;
+  background-color:#efefef;
+  font-size:50px;
+  font-weight:bold;
+  height:100px;
+  width:100px;
+  margin:15px;
+}
+
+.block{
+  border-radius:5px;
+  font-size:50px;
+  font-weight:bold;
+  height:100px;
+  width:100px;
+  padding-left:35px;
+  padding-top:15px;
+  background-color:#e6f2ff;
+}
+
+.2{
+  background-color:#e6f2ff:
+}
+
+/*
+color table
+
+100%      #ffffff 
+95%     #e6f2ff 
+90%     #cce6ff 
+85%     #b3d9ff 
+80%     #99ccff 
+75%     #80bfff 
+70%     #66b3ff 
+65%     #4da6ff 
+60%     #3399ff 
+55%     #1a8cff 
+50%     #0080ff 
+45%     #0073e6 
+40%     #0066cc
+
+http://www.w3schools.com/colors/colors_picker.asp
+*/
