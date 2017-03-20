@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css"></link>
   <script type="text/javascript" src="lib/jquery.js"></script>
   <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="lib/angular-animate.js"></script>
 
   <script type="text/javascript" src="js/homectrl.js"></script>
 </head>
@@ -31,7 +32,7 @@
         <tr ng-repeat="sheetAry in sheetTable">
           <td ng-repeat="sheet in sheetAry">
             <div class="sheet">
-              <div ng-if="sheet.hasBlock" class="block">{{sheet.block.point}}
+              <div ng-if="sheet.hasBlock" class="block" ng-class="sheet.block.animation">{{sheet.block.point}}
               </div>
             </div>
           </td>

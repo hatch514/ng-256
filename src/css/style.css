@@ -14,6 +14,8 @@
 }
 
 .block{
+  position:relative;
+  transition:all linear 0.5;  
   border-radius:5px;
   font-size:50px;
   font-weight:bold;
@@ -23,6 +25,33 @@
   padding-top:15px;
   background-color:#e6f2ff;
 }
+
+/*animation classes*/
+.move-up-one{
+  bottom:130px;
+}
+.move-up-two{
+  bottom:260px;
+}
+.move-right-one{
+  left:130px;
+}
+.move-right-two{
+  left:260px;
+}
+.move-down-one{
+  top:130px;
+}
+.move-down-two{
+  top:260px;
+}
+.move-left-one{
+  right:130px;
+}
+.move-left-two{
+  right:260px;
+}
+
 
 .2{
   background-color:#e6f2ff:
