@@ -1,4 +1,4 @@
-angular.module('256App',[])
+angular.module('256App', [])
   .controller('gameController', gameController);
 
 function gameController($scope){

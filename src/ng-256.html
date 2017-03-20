@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="css/style.css"></link>
   <script type="text/javascript" src="lib/jquery.js"></script>
   <script type="text/javascript" src="lib/angular.js"></script>
-  <script type="text/javascript" src="lib/bootstrap.js"></script>
 
   <script type="text/javascript" src="js/homectrl.js"></script>
 </head>
@@ -32,6 +31,10 @@
       <tr ng-repeat="sheetAry in sheetTable">
         <td ng-repeat="sheet in sheetAry">
           <div class="sheet">
+
+            <!-- TODO  Use onkeydown DOM-->
+            <!-- https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_event_key_key -->
+
             <div ng-if="sheet.hasBlock" class="block">{{sheet.block.point}}
             </div>
           </div>
