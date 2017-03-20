@@ -26,21 +26,18 @@
 
   <div class="container" ng-controller="gameController">
     <div class="row" ng-init="init()">
-    <table class="game-screen">
-    <!-- use dollor scope ! -->
-      <tr ng-repeat="sheetAry in sheetTable">
-        <td ng-repeat="sheet in sheetAry">
-          <div class="sheet">
 
-            <!-- TODO  Use onkeydown DOM-->
-            <!-- https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_event_key_key -->
-
-            <div ng-if="sheet.hasBlock" class="block">{{sheet.block.point}}
+      <table class="game-screen" tabindex="1" ng-keydown="keyListen($event)">
+        <tr ng-repeat="sheetAry in sheetTable">
+          <td ng-repeat="sheet in sheetAry">
+            <div class="sheet">
+              <div ng-if="sheet.hasBlock" class="block">{{sheet.block.point}}
+              </div>
             </div>
-          </div>
-        </td>
-      </tr>
-    </table>
+          </td>
+        </tr>
+      </table>
+
     </div>
   </div>
 </body>
