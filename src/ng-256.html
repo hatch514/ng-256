@@ -28,7 +28,7 @@
   <div class="container" ng-controller="gameController">
     <div class="row" ng-init="init()">
 
-      <table class="game-screen" tabindex="1" ng-keydown="keyListen($event)">
+      <table class="game-screen" tabindex="1" ng-keydown="gameLoop($event)">
         <tr ng-repeat="sheetAry in sheetTable">
           <td ng-repeat="sheet in sheetAry">
             <div class="sheet">

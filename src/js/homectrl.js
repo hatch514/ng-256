@@ -91,12 +91,6 @@ function gameController($scope){
     return Math.floor(Math.random() * 3);
   }
 
-  $scope.init = function(){
-    initializeSheets();
-    createBlock();
-    allocateBlocks();
-  };
-
   function initializeSheets(){
     $scope.ary0 = [new SheetObj(), new SheetObj(), new SheetObj()];
     $scope.ary1 = [new SheetObj(), new SheetObj(), new SheetObj()];
@@ -106,11 +100,30 @@ function gameController($scope){
   }
 
   function createBlock(){
-    var x = getRandomInt(3);
-    var y = getRandomInt(3);
-    var newBlock = new BlockObj(2, [x ,y]);
+    var coordsList = [];
+    for(var i=0; i<(EDGE_RIGHT+1); i++){
+      for(var j=0; j<(EDGE_RIGHT+1); j++){
+        coordsList.push({x:i, y:j});
+      }
+    }
+    $scope.allBlocks.forEach(function(block){
+      var block_x = block.coords[0];
+      var block_y = block.coords[1];
+      var index = null;
+      coordsList.forEach(function(coords,index){
+        if(block_x == coords.x && block_y == coords.y) this.index = index;
+      });
+      if(index) coordsList.split(index,1); 
+     
+    }); 
+    
+    var createIndex = getRandomInt(coordsList.length + 1);
+    var newBlock_x = coordsList[createIndex].x; 
+    var newBlock_y = coordsList[createIndex].y;
+    var newBlock = new BlockObj(2, [newBlock_x, newBlock_y]);
+
     $scope.allBlocks.push(newBlock);
-    $scope.sheetTable[y][x].setBlock();
+    $scope.sheetTable[newBlock_y][newBlock_x].setBlock(newBlock);
   }
 
   function allocateBlocks(){
@@ -121,15 +134,21 @@ function gameController($scope){
     });
   }
 
-  $scope.keyListen = function(event){
+  $scope.init = function(){
+    initializeSheets();
+    createBlock();
+    allocateBlocks();
+  };
+
+  $scope.gameLoop = function(event){
     var key = event.which;
-    if (key==KEY_UP) $scope.moveBlocks(KEY_UP);
-    if (key==KEY_RIGHT) $scope.moveBlocks(KEY_RIGHT);
-    if (key==KEY_DOWN) $scope.moveBlocks(KEY_DOWN);
-    if (key==KEY_LEFT) $scope.moveBlocks(KEY_LEFT);
+    if(key==KEY_UP || key==KEY_RIGHT || key==KEY_DOWN || key==KEY_LEFT){
+      moveBlocks(key);
+      createBlock();
+    }
   }
 
-  $scope.moveBlocks = function(direction){
+  function moveBlocks(direction){
     $scope.allBlocks.forEach(function(block){
       var now_x = block.coords[0];
       var now_y = block.coords[1];
