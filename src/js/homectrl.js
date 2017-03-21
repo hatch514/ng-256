@@ -38,7 +38,6 @@ function gameController($scope){
   const ANIMATION_DURATION = 250;
   const ANIMATION_EASING = 'swing';
 
-  $scope.count = 0;
   $scope.ary0;
   $scope.ary1;
   $scope.ary2;
@@ -107,8 +106,8 @@ function gameController($scope){
       }
     }
     $scope.allBlocks.forEach(function(block){
-      var block_x = block.coords[0];
-      var block_y = block.coords[1];
+      var block_x = block.coords.x;
+      var block_y = block.coords.y;
       var index = null;
       coordsList.forEach(function(coords,index){
         if(block_x == coords.x && block_y == coords.y) this.index = index;
@@ -118,18 +117,16 @@ function gameController($scope){
     }); 
     
     var createIndex = getRandomInt(coordsList.length + 1);
-    var newBlock_x = coordsList[createIndex].x; 
-    var newBlock_y = coordsList[createIndex].y;
-    var newBlock = new BlockObj(2, [newBlock_x, newBlock_y]);
+    var newBlock = new BlockObj(2, coordsList[createIndex]);
 
     $scope.allBlocks.push(newBlock);
-    $scope.sheetTable[newBlock_y][newBlock_x].setBlock(newBlock);
+    $scope.sheetTable[newBlock.coords.y][newBlock.coords.x].setBlock(newBlock);
   }
 
   function allocateBlocks(){
     $scope.allBlocks.forEach(function(block){
-      var x = block.coords[0];
-      var y = block.coords[1];
+      var x = block.coords.x;
+      var y = block.coords.y;
       $scope.sheetTable[y][x].setBlock(block);
     });
   }
@@ -150,8 +147,8 @@ function gameController($scope){
 
   function moveBlocks(direction){
     $scope.allBlocks.forEach(function(block){
-      var now_x = block.coords[0];
-      var now_y = block.coords[1];
+      var now_x = block.coords.x;
+      var now_y = block.coords.y;
       var nowSheet = $scope.sheetTable[now_y][now_x];
 
       var next_x, next_y;
@@ -165,7 +162,7 @@ function gameController($scope){
         
         block.setAnimation(DIR_UP, hop, function(){
           nowSheet.deleteBlock();
-          block.setCoords([next_x, next_y]);
+          block.setCoords({x:next_x, y:next_y});
           nextSheet.setBlock(block);
           $scope.$digest();
         });
@@ -178,7 +175,7 @@ function gameController($scope){
         
         block.setAnimation(DIR_RIGHT, hop, function(){
           nowSheet.deleteBlock();
-          block.setCoords([next_x, next_y]);
+          block.setCoords({x:next_x, y:next_y});
           nextSheet.setBlock(block);
           $scope.$digest();
         });
@@ -191,7 +188,7 @@ function gameController($scope){
 
         block.setAnimation(DIR_DOWN, hop, function(){
           nowSheet.deleteBlock();
-          block.setCoords([next_x, next_y]);
+          block.setCoords({x:next_x, y:next_y});
           nextSheet.setBlock(block);
           $scope.$digest();
         });
@@ -204,7 +201,7 @@ function gameController($scope){
         
         block.setAnimation(DIR_LEFT, hop, function(){
           nowSheet.deleteBlock();
-          block.setCoords([next_x, next_y]);
+          block.setCoords({x:next_x, y:next_y});
           nextSheet.setBlock(block);
           $scope.$digest();
         });
