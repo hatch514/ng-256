@@ -32,7 +32,7 @@
         <tr ng-repeat="sheetAry in sheetTable">
           <td ng-repeat="sheet in sheetAry">
             <div class="sheet">
-              <div ng-if="sheet.hasBlock" class="block" ng-class="sheet.block.animation">{{sheet.block.point}}
+              <div ng-if="sheet.hasBlock" id="{{sheet.block.id}}" class="block" ng-class="sheet.block.animation">{{sheet.block.point}}
               </div>
             </div>
           </td>

@@ -1,7 +1,7 @@
 angular.module('256App', ['ngAnimate'])
   .controller('gameController', gameController);
 
-function gameController($scope){
+function gameController($scope, $timeout){
   const KEY_UP = 38;
   const KEY_RIGHT = 39;
   const KEY_DOWN = 40;
@@ -30,12 +30,9 @@ function gameController($scope){
       {right: '+=260'}
     ]
   }
-  const ANIMATION_DURATION = 250;
+  const ANIMATION_DURATION = 150;
   const ANIMATION_EASING = 'swing';
 
-  $scope.ary0;
-  $scope.ary1;
-  $scope.ary2;
   $scope.sheetTable;
   $scope.allBlocks;
 
@@ -65,20 +62,24 @@ function gameController($scope){
     constructor(point, coords){ 
       this.point = point;
       this.coords = coords;
-      this.animation = "none";
+      this.setId();
     }
-    
+   
+    setId(){
+      this.id = this.coords.x + '-' + this.coords.y; 
+    }
+
     setCoords(coords){
       this.coords = coords;
+      this.setId();
       return new Promise(function(callback){callback()});
     }
 
-    setAnimation(direction, hop, callback){
-      if(hop>=0){
-        $('.block').animate(
+    setAnimation(direction, hop){
+      if(hop>0){
+        $('#' + this.id).animate(
           ANIMATION_CSS[direction][hop-1], 
-          ANIMATION_DURATION, ANIMATION_EASING, callback
-        );
+          ANIMATION_DURATION, ANIMATION_EASING);
       }
     }
   }
@@ -90,34 +91,33 @@ function gameController($scope){
   }
 
   function initializeSheets(){
-    $scope.ary0 = [new sheetObj(), new sheetObj(), new sheetObj()];
-    $scope.ary1 = [new sheetObj(), new sheetObj(), new sheetObj()];
-    $scope.ary2 = [new sheetObj(), new sheetObj(), new sheetObj()];
-    $scope.sheetTable = [$scope.ary0, $scope.ary1, $scope.ary2];
-    $scope.allBlocks = [];
+    var ary0 = [new sheetObj(), new sheetObj(), new sheetObj()];
+    var ary1 = [new sheetObj(), new sheetObj(), new sheetObj()];
+    var ary2 = [new sheetObj(), new sheetObj(), new sheetObj()];
+    var sheetTable = [ary0, ary1, ary2];
+    return sheetTable;
   }
 
   function createBlock(){
-    console.log('called');
     var coordsList = [];
     for(var i=0; i<(EDGE_RIGHT+1); i++){
       for(var j=0; j<(EDGE_RIGHT+1); j++){
         coordsList.push({x:j, y:i});
       }
     }
-    $scope.allBlocks.forEach(function(block){
+    $($scope.allBlocks).each(function(key, block){
       var block_x = block.coords.x;
       var block_y = block.coords.y;
       var deleteIndex = null;
-      coordsList.forEach(function(coords,index){
+      $(coordsList).each(function(index, coords){
         if(block_x == coords.x && block_y == coords.y) deleteIndex = index;
       });
-      if(deleteIndex) {
+      if(deleteIndex >= 0) {
         coordsList.splice(deleteIndex,1); 
       }    
     }); 
     
-    var createIndex = getRandomInt(coordsList.length, 0) ;
+    var createIndex = getRandomInt(coordsList.length, 0);
     var newBlock = new blockObj(2, coordsList[createIndex]);
 
     $scope.allBlocks.push(newBlock);
@@ -133,7 +133,8 @@ function gameController($scope){
   }
 
   $scope.init = function(){
-    initializeSheets();
+    $scope.allBlocks = [];
+    $scope.sheetTable = initializeSheets();
     createBlock();
     allocateBlocks();
   };
@@ -141,24 +142,34 @@ function gameController($scope){
   $scope.gameLoop = function(event){
     var key = event.which;
     if(key==KEY_UP || key==KEY_RIGHT || key==KEY_DOWN || key==KEY_LEFT){
-      moveBlocks(key);
+      var direction = key;
+      sortAllBlocks(direction).then(()=>{
+        return blockAnimate(direction);
+      }).then((isMoved)=>{
+        if(isMoved){
+          $scope.sheetTable = $scope.nextSheetTable;
+          $scope.allBlocks = $scope.nextAllBlocks;
+          createBlock();
+        }
+        return;
+      }).then(()=>{
+        // TODO make promisify
+        $timeout(() =>{
+          $scope.$digest();
+        }, ANIMATION_DURATION + 100)
+        console.log('digestcalled');
+      });
     }
   }
 
-  function deepCopy(oldObject){
-    var newObject = jQuery.extend(true, {}, oldObject);
-    return newObject;
-  }
-  
   function sortAllBlocks(direction){
     tempAllBlocks = [];
 
     if(direction==KEY_UP){
       for(var y = 0; y <= EDGE_BOTTOM; y++){
         for(var x = 0; x <= EDGE_RIGHT; x++){
-          $scope.allBlocks.forEach(function(block){
+          $scope.allBlocks.forEach((block) =>{
             if(block.coords.x == x && block.coords.y == y){
-              //use deep copy
               tempAllBlocks.push(block);
             } 
           });
@@ -167,7 +178,7 @@ function gameController($scope){
     }else if(direction==KEY_RIGHT){
       for(var x = EDGE_RIGHT; x >= 0; x--){
         for(var y = 0; y <= EDGE_BOTTOM; y++){
-          $scope.allBlocks.forEach(function(block){
+          $scope.allBlocks.forEach((block) =>{
             if(block.coords.x == x && block.coords.y == y){
               tempAllBlocks.push(block);
             } 
@@ -177,7 +188,7 @@ function gameController($scope){
     }else if(direction==KEY_DOWN){
       for(var y = EDGE_BOTTOM; y >= 0 ; y--){
         for(var x = 0; x <= EDGE_RIGHT; x++){
-          $scope.allBlocks.forEach(function(block){
+          $scope.allBlocks.forEach((block) =>{
             if(block.coords.x == x && block.coords.y == y){
               tempAllBlocks.push(block);
             } 
@@ -187,7 +198,7 @@ function gameController($scope){
     }else if(direction==KEY_LEFT){
       for(var x = 0; x <= EDGE_RIGHT; x++){
         for(var y = 0; y <= EDGE_BOTTOM; y++){
-          $scope.allBlocks.forEach(function(block){
+          $scope.allBlocks.forEach((block) =>{
             if(block.coords.x == x && block.coords.y == y){
               tempAllBlocks.push(block);
             } 
@@ -196,59 +207,106 @@ function gameController($scope){
       }
     }
     $scope.allBlocks = tempAllBlocks; 
-
-  }
-  
-  //change logic fundamentally
-  function moveBlocks(direction){
-    sortAllBlocks(direction);
-    blockAnimate(direction).then(function(){
-      createBlock(); 
-      return;
-    }).then(function(){
-      $scope.$digest();
+    return new Promise((callback) => {
+      callback(); 
     });
   }
 
   function blockAnimate(direction){
-    $scope.allBlocks.forEach(function(block){
+    var anythingIsMoved = false;
+    $scope.nextAllBlocks = [];
+    $scope.nextSheetTable = initializeSheets(); 
+
+    $($scope.allBlocks).each(function(index, block){
       var now_x = block.coords.x;
       var now_y = block.coords.y;
-      var nowSheet = $scope.sheetTable[now_y][now_x];
+      var now_point = block.point;
 
       var next_x, next_y;
-      var nextSheet; 
+      var next_point = now_point;
       var hop; 
       
       if(direction == KEY_UP){
         next_x = now_x;
-        next_y = EDGE_TOP;
-        nextSheet = $scope.sheetTable[next_y][next_x];
-        hop = now_y - EDGE_TOP; 
+        for(var i = EDGE_TOP; i<=EDGE_BOTTOM; i++){
+          next_y = i;
+          var overlap = false; 
+          $($scope.nextAllBlocks).each((key, nextBlock)=>{
+            var coords = nextBlock.coords;
+            if(next_x == coords.x && next_y ==coords.y){
+              overlap = true;
+            }
+          });
+          if(!overlap) break;
+        }
+
+        hop = now_y - next_y; 
+
       }else if(direction==KEY_RIGHT){
-        next_x = EDGE_RIGHT;
         next_y = now_y;
-        nextSheet = $scope.sheetTable[next_y][next_x];
-        hop = EDGE_RIGHT - now_x; 
+
+        for(var i = EDGE_RIGHT; i>=EDGE_LEFT; i--){
+          next_x = i;
+          var overlap = false; 
+          $($scope.nextAllBlocks).each((key, nextBlock)=>{
+            var coords = nextBlock.coords;
+            if(next_x == coords.x && next_y ==coords.y){
+              overlap = true;
+            }
+          });
+          if(!overlap) break;
+        }
+
+        hop = next_x - now_x; 
+
       }else if(direction==KEY_DOWN){
         next_x = now_x;
-        next_y = EDGE_BOTTOM;
-        nextSheet = $scope.sheetTable[next_y][next_x];
-        hop = EDGE_BOTTOM - now_y; 
+
+        for(var i = EDGE_BOTTOM; i >= EDGE_TOP; i--){
+          next_y = i;
+          var overlap = false; 
+          $($scope.nextAllBlocks).each((key, nextBlock)=>{
+            var coords = nextBlock.coords;
+            if(next_x == coords.x && next_y ==coords.y){
+              overlap = true;
+            }
+          });
+          if(!overlap) break;
+        }
+
+        hop = next_y - now_y; 
+        
       }else if(direction==KEY_LEFT){
-        next_x = EDGE_LEFT;
         next_y = now_y;
-        nextSheet = $scope.sheetTable[next_y][next_x];
-        hop = now_x - EDGE_LEFT; 
+
+        for(var i = EDGE_LEFT; i<=EDGE_RIGHT; i++){
+          next_x = i;
+          var overlap = false; 
+          $($scope.nextAllBlocks).each((key, nextBlock)=>{
+            var coords = nextBlock.coords;
+            if(next_x == coords.x && next_y ==coords.y){
+              overlap = true;
+            }
+          });
+          if(!overlap) break;
+        }
+
+        hop = now_x - next_x; 
+        
+      }
+      
+      var cloneBlock = new blockObj(next_point, {x:next_x, y:next_y});
+      $scope.nextSheetTable[next_y][next_x].setBlock(cloneBlock);
+      $scope.nextAllBlocks.push(cloneBlock);
+
+      if(hop>0){
+        anythingIsMoved = true;
+        console.log('setanimation');
+        block.setAnimation(direction, hop); // make Promisify`
       }
 
-      block.setAnimation(direction, hop, function(){
-        nowSheet.deleteBlock();
-        block.setCoords({x:next_x, y:next_y}).then(function(){
-          nextSheet.setBlock(block);
-        });
-      });
     });
-    return new Promise(function(callback){callback();}); 
+
+    return anythingIsMoved; 
   }
 }
