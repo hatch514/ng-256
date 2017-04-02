@@ -3,6 +3,11 @@
   border-radius:5px;
 }
 
+.alert-pane{
+  margin-top:15px;
+  width:390px;
+}
+
 .sheet{
   border-radius:5px;
   background-color:#efefef;

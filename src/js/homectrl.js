@@ -132,32 +132,38 @@ function gameController($scope, $timeout){
     });
   }
 
-  $scope.init = function(){
+  $scope.init = () => {
+    $scope.gameIsOver = false;
     $scope.allBlocks = [];
     $scope.sheetTable = initializeSheets();
     createBlock();
     allocateBlocks();
   };
 
-  $scope.gameLoop = function(event){
-    var key = event.which;
+  $scope.gameLoop = (event) => {
+    let key = event.which;
     if(key==KEY_UP || key==KEY_RIGHT || key==KEY_DOWN || key==KEY_LEFT){
-      var direction = key;
-      sortAllBlocks(direction).then(()=>{
+      let direction = key;
+
+      sortAllBlocks(direction).then(
+      () => {
         return blockAnimate(direction);
-      }).then((isMoved)=>{
+      }).then(
+      (isMoved) => {
         if(isMoved){
           $scope.sheetTable = $scope.nextSheetTable;
           $scope.allBlocks = $scope.nextAllBlocks;
           createBlock();
         }
         return;
-      }).then(()=>{
-        // TODO make promisify
-        $timeout(() =>{
+      }).then(
+      () => {
+        $timeout(() => {
           $scope.$digest();
         }, ANIMATION_DURATION + 100)
-        console.log('digestcalled');
+      }).then(
+      () => {
+        checkGameOver();
       });
     }
   }
@@ -309,4 +315,10 @@ function gameController($scope, $timeout){
 
     return anythingIsMoved; 
   }
+
+  var checkGameOver = () => {
+    if($scope.allBlocks.length == 9){
+      $scope.gameIsOver = true;
+    }
+  };
 }

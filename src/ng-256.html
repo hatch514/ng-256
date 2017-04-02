@@ -26,7 +26,7 @@
   </div>
 
   <div class="container" ng-controller="gameController">
-    <div class="row" ng-init="init()">
+    <div class="row game-pane" ng-init="init()">
 
       <table class="game-screen" tabindex="1" ng-keydown="gameLoop($event)">
         <tr ng-repeat="sheetAry in sheetTable">
@@ -39,6 +39,14 @@
         </tr>
       </table>
 
+    </div>
+    <div class="row alert-pane">
+      <div ng-show="!gameIsOver" class="alert alert-success">
+        <strong>GAME START!</strong>
+      </div>
+      <div ng-show="gameIsOver" class="alert alert-danger">
+        <strong>GAME OVER</strong>
+      </div>
     </div>
   </div>
 </body>
